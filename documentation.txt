@@ -1,0 +1,3 @@
+Google has a Instant Predictions feature which can interfere with the automated testing. 
+With instant predictions on, the buttons used to search change. The script should function for both
+instant predictions being on or off.
