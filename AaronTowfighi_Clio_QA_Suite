@@ -9,7 +9,7 @@
 <table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
 <tr><td><b>Test Suite</b></td></tr>
 <tr><td><a href="AaronTowfighi_Clio_QA_DisableAutoComplete.html">Disable autocomplete</a></td></tr>
-<tr><td><a href="AaronTowfighi_Clio_QA_Test1.html">Locate page and link with latest version of Selenium IDE</a></td></tr>
+<tr><td><a href="AaronTowfighi_Clio_QA_Test1.html">Selenium IDE Download</a></td></tr>
 <tr><td><a href="AaronTowfighi_Clio_QA_Test2.html">Search for random string</a></td></tr>
 <tr><td><a href="AaronTowfighi_Clio_QA_Test3.html">Bourbon</a></td></tr>
 </tbody></table>
