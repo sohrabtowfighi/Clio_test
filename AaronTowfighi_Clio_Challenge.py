@@ -12,62 +12,60 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
-import unittest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import random
 import re
-from pdb import set_trace
 
-def remove_periods(mystring):
+def remove_periods(myString):
     string_list = []
-    for i in mystring:
+    for i in myString:
         if i != '.':
             string_list.append(i)
     return ''.join(string_list)
 
-def get_latest_version_href(mymatches):
-    version = list()
+def get_latest_version_href(myMatchesString):
+    version_numbers = list()
     pat_version = '\d\.\d\.\d'
     reg_version = re.compile(pat_version)
-    max_version = 0
+    max_version_int = 0
     max_version_index = 0
-    for i in range(0,len(mymatches)):
-        match = reg_version.search(mymatches[i].groups(0))
-        version.append(match.groups(0))
-        current_version = remove_periods(version[-1])
-        if current_version > max_version:
-            max_version = current_version
+    for i in range(0,len(myMatchesString)):
+        match = reg_version.search(myMatchesString[i])
+        current_version = match.group(0)
+        current_version_int = int(remove_periods(current_version))
+        if current_version_int > max_version_int:
+            max_version_int = current_version_int
             max_version_index = i
-    latest_version_url = mymatches[max_version_index].groups(0)
-    return latest_version_url
+    latest_version_href = myMatchesString[max_version_index]
+    return latest_version_href
     
-class Tests(unittest.TestCase):
+class Tests(object):
 
     def setUp(self):
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(10)  # set 10 second timeout
+        # set 10 second timeout for element search
+        self.driver.implicitly_wait(10) 
+        self.wait = WebDriverWait(self.driver, 10)
 
     def test_1(self):
         driver = self.driver
-        driver.get("http://www.google.ca")
-        set_trace()
-        self.assertIn("Google", driver.title)
-        elem = driver.find_element_by_name("q")
-        elem.send_keys("Selenium IDE Download")
-        elem2 = driver.find_element_by_id("btnK")
-        elem2.click()
-        # find the first result
-        # advertisements use different xpath
-        elem3 = driver.find_element_by_xpath(".//*[@id='rso']/div[2]/div[1]/div/h3/a")
-        elem3.click()
-        self.assertEqual("http://www.seleniumhq.org/download/",
-                          driver.current_url)
-                          
-        set_trace()
+        driver.get("http://www.google.ca")     
+        assert "Google" in driver.title
+        elem_query = driver.find_element_by_name("q")
+        elem_query.send_keys("Selenium IDE Download" + Keys.ENTER)
+        search_result_xpath = ".//*[@id='rso']/div[2]/div[1]/div/h3/a"
+        elem_result = driver.find_element_by_xpath(search_result_xpath)
+        elem_result.click()
+        self.wait.until(EC.title_contains('Downloads'))
+        assert "http://www.seleniumhq.org/download/" == driver.current_url                          
         pat = 'http://release\.seleniumhq\.org/selenium-ide/\d\.\d\.\d/selenium-ide-\d\.\d\.\d\.xpi'
         reg = re.compile(pat)
         matches = reg.findall(driver.page_source)
         if matches is not None:  # result found
             latest_version = get_latest_version_href(matches)
+        assert matches is not None, "No latest version of Selenium IDE found"
+        
     
    # def test_2(self):
    #     driver = self.driver
@@ -78,40 +76,7 @@ class Tests(unittest.TestCase):
         self.driver.close()
 
 if __name__ == "__main__":
-    unittest.main()
-
-
-
-def setup():
-    browser = webdriver.Firefox()
-    browser.get("https://www.google.ca")
-    return browser
-    
-def wind_down(browser):
-    browser.close()
-    
-def test_1():
-    """
-        1.  Use google (google.ca) to find and locate the page and link 
-            with latest version of Selenium IDE.
-    """
-    browser = setup()
-    assert "Google" in browser.title
-    elem = browser.find_element_by_id("lst-ib") # Find the query box
-    elem.send_keys("Selenium IDE Download" + Keys.ENTER)
-    try:
-        elem_2B_clicked = browser.find_element_by_link_text("Download Selenium IDE")
-    except NoSuchElementException:
-        assert 0, "Did not find seleniumhq"
-    elem_2B_clicked.click()
-    try:
-        element = WebDriverWait(browser, 10).until(
-                    EC.presence_of_element_located((By.ID, "myDynamicElement")))
-    except:
-        set_trace()
-    find_elements_by_partial_link_text
-        
-
-#Keys.DOWN
-if __name__ == "__main__":
-    test_1()
+    test = Tests()
+    test.setUp()
+    test.test_1()
+    test.tearDown()
