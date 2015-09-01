@@ -16,11 +16,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 import random
 import re
 import unittest
 import string
-#from pdb import set_trace
+from pdb import set_trace
 
 
 def removePeriods(myString):
@@ -106,11 +107,12 @@ class Tests(unittest.TestCase):
         elem_query = driver.find_element_by_name("q")
         elem_query.send_keys('bourbon')
         elem_query.click()  # set focus so that DOWN & RIGHT work.
-        elem_query.send_keys(Keys.DOWN*2)# + Keys.RIGHT)
-        elem_btn = driver.find_element_by_css_selector(".sbqs_a")
-        title = elem_btn.text
-        elem_btn.click()
-        self.wait.until(EC.title_contains(title))
+        elem_query.send_keys(Keys.DOWN*2)# + Keys.RIGHT) # shortcut for im feeling lucky    
+        second_autocomplete_option = "#sbse1"
+        elem_btn = driver.find_element_by_css_selector(second_autocomplete_option)
+        elem_ifl = driver.find_element_by_partial_link_text("I'm Feeling")
+        elem_ifl.click()
+        self.wait.until(EC.staleness_of(elem_btn))
         assert 'google' not in driver.title.lower()
     
     @classmethod
