@@ -67,7 +67,7 @@ class Tests(unittest.TestCase):
         matches = reg.findall(driver.page_source)
         if matches is not None:  # install IDE URL found
             latest_version_url = getURLofLatestVersion(matches)
-            print("The download link to the latest version of Selenium IDE is: ")
+            print("The link to the latest version of Selenium IDE is: ")
             print(latest_version_url)
         self.assertIsNot(matches, None)
             
