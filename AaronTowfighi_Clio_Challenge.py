@@ -115,7 +115,7 @@ if __name__ == "__main__":
 """
     Justifications:
     
-    1.  I used the unittest TestCase class as the parent of my Test class 
+    1.  I used the unittest TestCase class as the parent of my Tests class 
         because the unittest code takes care of error handling.
         
     2.  I use the setUpClass/tearDownClass methods instead of the setUp/tearDown 
