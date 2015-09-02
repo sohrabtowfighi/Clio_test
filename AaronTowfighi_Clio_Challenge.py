@@ -125,4 +125,8 @@ if __name__ == "__main__":
     3.  For all tests, I try to find elements by locators that are sturdy. 
         ID is best, but in its absence, alternatives are used. To determine the 
         locator value of an element, I use FirePath and FireBug. 
+        
+    4.  Unittest needs to be modified if we want to run the same test repeatedly
+        for load testing. I use it because it is simple and part of the standard
+        library.
 """    
