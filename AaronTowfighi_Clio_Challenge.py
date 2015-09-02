@@ -1,13 +1,6 @@
 """
     Challenge Project Submission - QA Automation
     Aaron (Sohrab) Towfighi - August 31, 2015
-    1.  Use google (google.ca) to find and locate the page and link 
-        with latest version of Selenium IDE.
-    2.  Use google to perform a search for a random string (ie. running 
-        the script will search for a different string each time it is run).
-    3.  Use google to enter "bourbon" in the search field. Then find and 
-        click the "I'm Feeling Lucky" link for one of the auto-complete 
-        suggestions.
 """
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -15,7 +8,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 import random
 import re
 import unittest
@@ -105,8 +97,8 @@ class Tests(unittest.TestCase):
         elem_query = driver.find_element_by_name("q")
         elem_query.send_keys('bourbon')
         elem_query.click()  # set focus so that Keys.DOWN works
-        elem_query.send_keys(Keys.DOWN*4) # choose the 4th option  
-        elem_ifl = driver.find_element_by_partial_link_text("I'm Feeling")
+        elem_query.send_keys(Keys.DOWN*3)
+        elem_ifl = driver.find_element_by_partial_link_text("I'm Feeling Lucky")
         elem_ifl.click()
         self.wait.until(EC.staleness_of(elem_ifl))
         self.assertNotIn('Google', driver.title)
@@ -130,5 +122,5 @@ if __name__ == "__main__":
         
     3.  For all tests, I try to find elements by locators that are sturdy, 
         namely the element id. To determine the locator, I use the Firefox 
-        plugins FirePath and FireBug. 
+        plugins FirePath alongside FireBug. 
 """    
