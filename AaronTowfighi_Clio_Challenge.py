@@ -126,7 +126,10 @@ if __name__ == "__main__":
         ID is best, but in its absence, alternatives are used. To determine the 
         locator value of an element, I use FirePath and FireBug. 
         
-    4.  Unittest needs to be modified if we want to run the same test repeatedly
-        for load testing. I use it because it is simple and part of the standard
-        library.
-"""    
+    4.  To scale the testing, you could invoke multiple calls to 
+        unittest.main() and/or use the multiprocessing module, but the best 
+        choice is to use a module from outside the standard library that is 
+        better suited to this purpose (eg. pytest, pylot). You could also modify
+        unittest so that it supports repeated calls to the same function. These
+        solutions are beyond the scope of this challenge.
+"""
