@@ -14,15 +14,13 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import random
 import re
 import unittest
 import string
-from pdb import set_trace
-
+#from pdb import set_trace
 
 def removePeriods(myString):
     string_list = []
@@ -44,16 +42,15 @@ def getURLofLatestVersion(URL_List):
         if current_version_int > max_version_int:
             max_version_int = current_version_int
             max_version_index = i
-    latest_version_href = URL_List[max_version_index]
-    return latest_version_href
+    latest_version_url = URL_List[max_version_index]
+    return latest_version_url
     
 class Tests(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.driver = webdriver.Firefox()
-        # set 10 second timeout for element search
-        self.driver.implicitly_wait(10) 
+        self.driver = webdriver.Firefox()        
+        self.driver.implicitly_wait(10) # 10 second timeout for element search
         self.wait = WebDriverWait(self.driver, 10)
     
     def test1(self):
@@ -63,20 +60,22 @@ class Tests(unittest.TestCase):
         """
         driver = self.driver
         driver.get("http://www.google.ca")     
-        assert "Google" in driver.title
+        self.assertIn("Google", driver.title)
         elem_query = driver.find_element_by_name("q")
         elem_query.send_keys("Selenium IDE Download")
         elem_query.send_keys(Keys.ENTER)
         elem_result = driver.find_element_by_link_text("Download Selenium IDE")
         elem_result.click()
-        self.wait.until(EC.title_contains('Downloads'))
-        assert "http://www.seleniumhq.org/download/" == driver.current_url                          
-        pat = 'http://release\.seleniumhq\.org/selenium-ide/\d\.\d\.\d/selenium-ide-\d\.\d\.\d\.xpi'
+        self.wait.until(EC.staleness_of(elem_query))
+        desired_url = "http://www.seleniumhq.org/download/"
+        self.assertEqual(desired_url, driver.current_url)
+        pat = ('http://release\.seleniumhq\.org/selenium-ide/'
+                + '\d\.\d\.\d/selenium-ide-\d\.\d\.\d\.xpi')
         reg = re.compile(pat)
         matches = reg.findall(driver.page_source)
         if matches is not None:  # install IDE URL found
             latest_version = getURLofLatestVersion(matches)
-        assert matches is not None, "No version of Selenium IDE found"
+        self.assertIsNot(matches, None)
             
     def test2(self, size=5):
         """
@@ -85,15 +84,14 @@ class Tests(unittest.TestCase):
         """
         driver = self.driver
         driver.get("http://www.google.ca")     
-        assert "Google" in driver.title
+        self.assertIn("Google", driver.title)
         elem_query = driver.find_element_by_name("q")
         chars = string.ascii_uppercase + string.digits
         random_string = ''.join(random.choice(chars) for i in range(size))
         elem_query.send_keys(random_string + Keys.ENTER)
-        # check that a search result loads
         search_result_xpath = ".//*[@id='rso']/div[2]/div[1]/div/h3/a"
-        elem_result = driver.find_element_by_xpath(search_result_xpath)      
-        assert random_string in driver.title, "Random string is not in title"
+        elem_result = driver.find_element_by_xpath(search_result_xpath)
+        self.assertIn(random_string, driver.title)
     
     def test3(self):
         """
@@ -103,17 +101,15 @@ class Tests(unittest.TestCase):
         """
         driver = self.driver
         driver.get("http://www.google.ca")     
-        assert "Google" in driver.title
+        self.assertIn("Google", driver.title)
         elem_query = driver.find_element_by_name("q")
         elem_query.send_keys('bourbon')
-        elem_query.click()  # set focus so that DOWN & RIGHT work.
-        elem_query.send_keys(Keys.DOWN*2)# + Keys.RIGHT) # shortcut for im feeling lucky    
-        second_autocomplete_option = "#sbse1"
-        elem_btn = driver.find_element_by_css_selector(second_autocomplete_option)
+        elem_query.click()  # set focus so that Keys.DOWN works
+        elem_query.send_keys(Keys.DOWN*4) # choose the 4th option  
         elem_ifl = driver.find_element_by_partial_link_text("I'm Feeling")
         elem_ifl.click()
-        self.wait.until(EC.staleness_of(elem_btn))
-        assert 'google' not in driver.title.lower()
+        self.wait.until(EC.staleness_of(elem_ifl))
+        self.assertNotIn('Google', driver.title)
     
     @classmethod
     def tearDownClass(self):
@@ -121,3 +117,18 @@ class Tests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+"""
+    Justifications:
+    
+    1.  I used the unittest TestCase class as the parent of my Test class 
+        because the unittest code takes care of error handling.
+        
+    2.  I use the setUpClass/tearDownClass methods instead of the setUp/tearDown 
+        methods, so that the same webDriver instance can be used in multiple 
+        tests.
+        
+    3.  For all tests, I try to find elements by locators that are sturdy, 
+        namely the element id. To determine the locator, I use the Firefox 
+        plugins FirePath and FireBug. 
+"""    
