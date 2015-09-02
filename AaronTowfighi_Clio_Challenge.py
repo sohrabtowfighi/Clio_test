@@ -66,7 +66,9 @@ class Tests(unittest.TestCase):
         reg = re.compile(pat)
         matches = reg.findall(driver.page_source)
         if matches is not None:  # install IDE URL found
-            latest_version = getURLofLatestVersion(matches)
+            latest_version_url = getURLofLatestVersion(matches)
+            print("The download link to the latest version of Selenium IDE is: ")
+            print(latest_version_url)
         self.assertIsNot(matches, None)
             
     def test2(self, size=5):
@@ -97,7 +99,7 @@ class Tests(unittest.TestCase):
         elem_query = driver.find_element_by_name("q")
         elem_query.send_keys('bourbon')
         elem_query.click()  # set focus so that Keys.DOWN works
-        elem_query.send_keys(Keys.DOWN*3)
+        elem_query.send_keys(Keys.DOWN*2)
         elem_ifl = driver.find_element_by_partial_link_text("I'm Feeling Lucky")
         elem_ifl.click()
         self.wait.until(EC.staleness_of(elem_ifl))
@@ -120,7 +122,7 @@ if __name__ == "__main__":
         methods, so that the same webDriver instance can be used in multiple 
         tests.
         
-    3.  For all tests, I try to find elements by locators that are sturdy, 
-        namely the element id. To determine the locator, I use the Firefox 
-        plugins FirePath alongside FireBug. 
+    3.  For all tests, I try to find elements by locators that are sturdy. 
+        ID is best, but in its absence, alternatives are used. To determine the 
+        locator value of an element, I use FirePath and FireBug. 
 """    
